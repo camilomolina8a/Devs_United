@@ -45,7 +45,7 @@
 .sigin-container {
     display: flex;
 
-    width: 400px;
+    width: 58%;
     height: 46px;
     border-radius: 5px;
     cursor: pointer;
@@ -87,7 +87,7 @@
 
 .text-footer {
     position: absolute;
-    bottom: 45px;
+    bottom: 8%;
     color: #60265b;
     cursor:default;
 }
