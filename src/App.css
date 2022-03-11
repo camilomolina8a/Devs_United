@@ -2,15 +2,32 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+
+    scrollbar-width: thin; /* Esto es para que el scroll bar de Firefox sea fino*/
+    
+}
+body{
+    background-color: var(--bg-color-section);
+    
+}
+body::-webkit-scrollbar {
+    width: 6px;
+    background-color: #2E132C;
+
+}
+body::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color:  #914D8B;
 }
 
 :root{
     --bg-color-navbar: #250C23;
     --bg-color-head: #150714;
-    --bg-color-body: #2E132C;
+    --bg-color-section: #2E132C;
 
     --bg-color-active: #60265B;
     --bg-color-btn-continue: #00DA76;
     --bg-color-btn-google: #4285F4;
     --placeholder-color: #914D8B;
+
 }

@@ -1,5 +1,6 @@
 import React from "react";
 
+import "./pages_styles/LoginPage.css";
 
 import logoDevsUnited from "../assets/logo-big-devsUnited.png";
 import logoGoogle from "../assets/logo-google.png";

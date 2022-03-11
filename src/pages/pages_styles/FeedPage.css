@@ -1,0 +1,153 @@
+/*---------- Styles for Nav ----------*/
+
+.FeedPage-nav {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 8vh;
+    background-color: var(--bg-color-navbar);
+}
+.FeedPage-nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 50%;
+}
+.nav-title-logo {
+    font-family: "Silkscreen", sans-serif;
+    cursor: pointer;
+    color: #f50d5a;
+}
+
+.nav-title-logo span {
+    color: rgba(255, 255, 255, 0.9);
+}
+.nav-user-picture {
+    height: 70%;
+}
+
+/*---------- Styles for Header ----------*/
+
+.FeedPage-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    padding-top: 8vh;
+    background-color: var(--bg-color-head);
+}
+.FeedPage-header-content {
+    display: flex;
+    width: 50%;
+    padding: 10px;
+    /* border: 1px solid white; */
+}
+.FeedPage-header-content .left {
+    display: flex;
+    justify-content: center;
+    width: 10%;
+    padding: 0 15px;
+    /* border: 1px solid white; */
+}
+.header-user-picture {
+    width: 45px;
+    height: 45px;
+}
+
+.FeedPage-header-content .right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 90%;
+    /* border: 1px solid white; */
+}
+.fake-textarea {
+    width: 100%;
+    min-height: 45px;
+    padding: 10px;
+    font-size: 20px;
+    font-family: "Fira Code", monospace;
+    white-space:pre-wrap;
+    color: rgba(255, 255, 255, 0.9);
+    cursor:text;
+
+    user-select: text;
+    white-space: pre-line;
+    
+    overflow-wrap: break-word;
+    -webkit-user-modify: read-write-plaintext-only;
+    line-break: after-white-space ;
+
+    border-bottom: 1px solid #914D8B;
+
+
+}
+.fake-textarea:empty::before { /* esto sirve para que simule un "placeholder" de un input type text*/
+    visibility:visible;
+    content: "What's happening?";
+    color: #914D8B;
+}
+
+.fake-textarea:focus {
+    outline: none;
+}
+
+
+#description{ /* este es elid del textarea real per que esta oculto*/
+    display: none;
+}
+
+.lenght-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 30px;
+    padding: 20px 0;
+    font-size: 16px;
+    font-family: "Fira Code", monospace;
+}
+.lenght-container .current {
+    color: rgba(255, 255, 255, 0.9);
+}
+.lenght-container .max {
+    color: #f50d5a;
+}
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    min-height: 35px;
+    width: 100%;
+
+    /* border: 1px solid white; */
+}
+.button-container button {
+    width: 105px;
+    height: 35px;
+    outline: none;
+    border: none;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: "Silkscreen", sans-serif;
+    cursor: pointer;
+    color: #f50d5a;
+    background-color: var(--bg-color-section);
+}
+
+.button-container button:hover {
+    background-color: #914d8b5b;
+}
+
+/*---------- Styles for Section ----------*/
+
+.FeedPage-section {
+    display: flex;
+    justify-content: center;
+    height: 66vh;
+    width: 100%;
+    border-top: 2px solid #914D8B;
+    border: 1px solid white;    
+}
