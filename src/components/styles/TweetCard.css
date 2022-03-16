@@ -1,0 +1,102 @@
+.TweetCard {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    width: 100%;
+    height: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--bg-color-active);
+    /* border: 2px solid var(--bg-color-active); */
+}
+
+.TweetCard-picture {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 15%;
+    /* margin-top: 25px; */
+
+    /* border: 1px solid green; */
+
+}
+.TweetCard-picture img {
+    width: 70%;
+    /* border: 1px solid green; */
+}
+
+/*-----------------------------------------------------------*/
+
+.TweetCard-content {
+    display: flex;
+    flex-wrap: wrap;
+    display: flex;
+    width: 80%;
+    font-family: "Fira Code", monospace;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    /* padding: 0 10px; */
+
+    /* border: 1px solid green; */
+}
+
+.TweetCard-content-title-head {
+    display: flex;
+    /* margin-top: 25px; */
+}
+.TweetCard-content-title-head .title{
+    margin-right: 5px;
+    
+    padding: 5px;
+
+    font-weight: 700;
+    font-size: 20px;
+    /* text-align: center; */
+    font-family: "Silkscreen", sans-serif;
+    color: var( --bg-color-section);
+
+    /* border: 1px solid white; */
+    
+    background: yellow;
+
+    /* background-color: yellow; ! Este color debe ser cambiado dinamicamente con el color que el usuarui selecciona desde el inicio al loguearse  */
+}
+.TweetCard-content-title-head .date {
+    padding: 5px;
+    /* border: 1px solid white; */
+}
+
+.TweetCard-content-title .text {
+    padding-left: 5px;
+    margin: 20px 0;
+    /* border: 1px solid green; */
+}
+
+.TweetCard-content-like {
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 25px;
+    padding-left: 5px;
+    height: 24px;
+    cursor: pointer;
+}
+.current-likes {
+    margin-top: 10px;
+    /* border: 1px solid whitesmoke; */
+}
+
+/*-----------------------------------------------------------*/
+
+.TweetCard-delete {
+    display: flex;
+    justify-content: flex-end;
+    height: 100%;
+    width: 5%;
+    /* margin-top: 25px; */
+    cursor: pointer;
+
+    /* border: 1px solid green; */
+}
+.TweetCard-delete img {
+    width: 24px;
+}

@@ -1,10 +1,76 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import "./pages_styles/WelcomePage.css";
 
+import { firestore } from "../firebase";
+
 import logoDevsUnited from "../assets/logo-big-devsUnited.png";
 
-function WelcomePage() {
+function WelcomePage({ dataGlobalUser}) {
+
+    const [firstName, setFirstName] = useState("");
+    const [colorUser, setColorUser] = useState("");
+    const [userName, setUserName] = useState("");
+
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        console.log(e.target.value);
+        setUserName(e.target.value);
+    };
+
+    const handleColorSelect = (elementID) => {
+        const elementClicked = document.getElementById(elementID);
+        const color = elementClicked.getAttribute("color");
+
+        setColorUser(color);
+
+        // para agregar la clase Active al color seleccionado y eliminar la clase Active del resto de colores
+
+        const elements = document.querySelectorAll(".color");
+
+        elements.forEach((elementColor) => {
+            if (
+                elementColor.classList.toString() ===
+                elementClicked.classList.toString()
+            ) {
+                elementClicked.classList.add("active");
+                // console.log(elementClicked.classList.toString())
+            } else {
+                elementColor.classList.remove("active");
+                // console.log(elementColor.classList.toString());
+            }
+        });
+    };
+
+    const handleContinue = () => {
+
+        // TODO: eviar a firebase los valores de userName y de colorUser correspondiente a el ususario logueado
+
+        if (userName !== "" && colorUser !== "") {
+            // console.log("CONTINUE");
+            navigate("/feed-page");
+        }
+        // // console.log("INGRESE VALORES");
+        // return;
+    };
+
+    // console.log("======================");
+    // console.log("DESDE WELCOME");
+    // console.log(userName);
+    // console.log(colorUser);
+    // console.log("======================");
+
+    useEffect(() => {
+        if (dataGlobalUser) {
+            const firstName = dataGlobalUser.displayName.split(" ")[0];
+            setFirstName(firstName);
+        }
+
+        return () => {};
+    }, [dataGlobalUser]);
+
     return (
         <div className="WelcomePage-container">
             <div className="WelcomePage-left">
@@ -14,27 +80,68 @@ function WelcomePage() {
             <div className="WelcomePage-right">
                 <div className="Welcome-right-content">
                     <h1>
-                        Welcome, <span>Name</span>
+                        Welcome, <span>{firstName}</span>
                     </h1>
 
                     <input
                         type="text"
                         name=""
+                        onChange={handleChange}
                         placeholder="Type your username"
+                        required
                     />
 
                     <h3>Select your favorite color</h3>
 
                     <div className="colors-container">
-                        <div className="color red"></div>
-                        <div className="color orange"></div>
-                        <div className="color yellow"></div>
-                        <div className="color green"></div>
-                        <div className="color blue"></div>
-                        <div className="color purple"></div>
+                        <div
+                            className="color red"
+                            id="red"
+                            color="#F50D5A"
+                            onClick={() => handleColorSelect("red")}
+                        ></div>
+                        <div
+                            className="color orange"
+                            id="orange"
+                            color="#FF865C"
+                            onClick={() => handleColorSelect("orange")}
+                        ></div>
+                        <div
+                            className="color yellow"
+                            id="yellow"
+                            color="#FFEA5C"
+                            onClick={() => handleColorSelect("yellow")}
+                        ></div>
+                        <div
+                            className="color green"
+                            id="green"
+                            color="#00DA76"
+                            onClick={() => handleColorSelect("green")}
+                        ></div>
+                        <div
+                            className="color blue"
+                            id="blue"
+                            color="#0096CE"
+                            onClick={() => handleColorSelect("blue")}
+                        ></div>
+                        <div
+                            className="color purple"
+                            id="purple"
+                            color="#800FFF"
+                            onClick={() => handleColorSelect("purple")}
+                        ></div>
                     </div>
 
-                    <button>CONTINUE</button>
+                    {userName !== "" && colorUser !== "" ? (
+                        <button
+                            onClick={handleContinue}
+                            className="btn-continue"
+                        >
+                            CONTINUE
+                        </button>
+                    ) : (
+                        <button className="btn-not-yet">CONTINUE</button>
+                    )}
                 </div>
 
                 <p className="text-footer">

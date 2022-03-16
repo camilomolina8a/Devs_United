@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+import { useNavigate } from "react-router-dom";
 
 import "./pages_styles/LoginPage.css";
-
 import logoDevsUnited from "../assets/logo-big-devsUnited.png";
 import logoGoogle from "../assets/logo-google.png";
 
-function LoginPage() {
+import { googlePopUp } from "../firebase.js"
+
+
+
+function LoginPage({dataGlobalUser,setDataGlobalUser}) {
+
+    const navigate = useNavigate()
+
+
+    const handleClick = () => {
+        console.log('DIste click'); 
+        googlePopUp();
+        navigate('/welcome-page')
+    }
+
+
     return (
         <div className="LoginPage-container">
             <div className="LoginPage-left">
@@ -22,7 +38,7 @@ function LoginPage() {
                         <img src={logoGoogle} alt="Google Logo" />
                     </div>
 
-                    <div className="signin-text">
+                    <div className="signin-text" onClick={ handleClick }>
                         <p>Sign in with Google</p>
                     </div>
                 </div>
