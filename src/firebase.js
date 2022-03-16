@@ -40,9 +40,8 @@ export const googlePopUp = async () =>
 
 // () => de esta forma para que no se ejecute a penas cargue la pagina sino luego de dar click ; exportamos para usarlo en el boton de login con google
 
-export const logout = () => {
-    // para desloguearnos
-    signOut(auth);
-};
+// para desloguearnos
+export const logout = () => signOut(auth);
+    
 
 export default firestore;

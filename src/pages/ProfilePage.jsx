@@ -13,11 +13,13 @@ import { logout } from "../firebase.js";
 
 
 function ProfilePage({ dataGlobalUser }) {
+    
+    const navigate = useNavigate()
 
     // To logout from google and the user will be redirected to the Login Page
     const Logout = () => {
 
-        const navigate = useNavigate()
+        
         logout();
         navigate("/")
     }

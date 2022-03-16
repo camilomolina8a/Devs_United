@@ -9,14 +9,19 @@ import logoDevsUnited from "../assets/logo-big-devsUnited.png";
 
 function WelcomePage({ dataGlobalUser}) {
 
+    //TODO: ENVIAR el userName y el color a Firebase correspondiente al usuario logueado
+
     const [firstName, setFirstName] = useState("");
     const [colorUser, setColorUser] = useState("");
     const [userName, setUserName] = useState("");
 
+    console.log(userName);
+    console.log(colorUser);
+
+
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        console.log(e.target.value);
         setUserName(e.target.value);
     };
 
@@ -36,10 +41,8 @@ function WelcomePage({ dataGlobalUser}) {
                 elementClicked.classList.toString()
             ) {
                 elementClicked.classList.add("active");
-                // console.log(elementClicked.classList.toString())
             } else {
                 elementColor.classList.remove("active");
-                // console.log(elementColor.classList.toString());
             }
         });
     };
@@ -52,15 +55,9 @@ function WelcomePage({ dataGlobalUser}) {
             // console.log("CONTINUE");
             navigate("/feed-page");
         }
-        // // console.log("INGRESE VALORES");
-        // return;
+        
     };
 
-    // console.log("======================");
-    // console.log("DESDE WELCOME");
-    // console.log(userName);
-    // console.log(colorUser);
-    // console.log("======================");
 
     useEffect(() => {
         if (dataGlobalUser) {

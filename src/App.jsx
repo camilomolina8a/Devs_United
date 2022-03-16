@@ -17,11 +17,14 @@ function App() {
 
     const [dataGlobalUser, setDataGlobalUser] = useState(null); // Global variable ; User data provided by Google when the user is logged.
 
+    console.log(dataGlobalUser);
+
+    //-----------------------------------------------------------------------
     useEffect(() => {
         const desuscribir = onAuthStateChanged(auth, (firebaseUser) => {
             if (firebaseUser) {
                 setDataGlobalUser(firebaseUser);
-                console.log(firebaseUser);
+                // console.log(firebaseUser);
             } else {
                 console.log("NO Logueado");
             }
@@ -31,19 +34,14 @@ function App() {
             desuscribir();
         };
     }, []);
-
-    // console.log("DATOS EN APP: ");
-    // console.log(userName);
-    // console.log(colorUser);
+    //-----------------------------------------------------------------------
 
     return (
         <>
             <Routes>
                 <Route
                     path="/"
-                    element={
-                        <LoginPage setDataGlobalUser={setDataGlobalUser} />
-                    }
+                    element={<LoginPage dataGlobalUser={dataGlobalUser} />}
                 />
                 <Route
                     path="/welcome-page"
@@ -51,11 +49,7 @@ function App() {
                 />
                 <Route
                     path="/feed-page"
-                    element={
-                        dataGlobalUser && (
-                            <FeedPage dataGlobalUser={dataGlobalUser} />
-                        )
-                    }
+                    element={<FeedPage dataGlobalUser={dataGlobalUser} />}
                 />
                 <Route
                     path="/profile-page"

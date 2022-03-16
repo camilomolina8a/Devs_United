@@ -6,21 +6,32 @@ import "./pages_styles/LoginPage.css";
 import logoDevsUnited from "../assets/logo-big-devsUnited.png";
 import logoGoogle from "../assets/logo-google.png";
 
-import { googlePopUp } from "../firebase.js"
+import { googlePopUp } from "../firebase.js";
 
 
+function LoginPage() {
 
-function LoginPage({dataGlobalUser,setDataGlobalUser}) {
+    const navigate = useNavigate();
 
-    const navigate = useNavigate()
+//-----------------------------------------------------------------------
+    const handleClick = async () => {
 
+        // console.log("DIste click");
 
-    const handleClick = () => {
-        console.log('DIste click'); 
-        googlePopUp();
-        navigate('/welcome-page')
+        const data = await googlePopUp();
+        if(data){
+            // console.log("SIGUIENTEEEEE");
+            navigate("/welcome-page")
+        }
+        
+        
+
     }
+//-----------------------------------------------------------------------
 
+
+
+    
 
     return (
         <div className="LoginPage-container">
@@ -38,7 +49,7 @@ function LoginPage({dataGlobalUser,setDataGlobalUser}) {
                         <img src={logoGoogle} alt="Google Logo" />
                     </div>
 
-                    <div className="signin-text" onClick={ handleClick }>
+                    <div className="signin-text" onClick={handleClick}>
                         <p>Sign in with Google</p>
                     </div>
                 </div>
