@@ -36,6 +36,7 @@
 }
 .nav-user-picture {
     height: 100%;
+    border-radius: 50%;
     /* border: 1px solid white; */
 
 }
@@ -67,6 +68,7 @@
 .header-user-picture {
     width: 45px;
     height: 45px;
+    border-radius: 50%;
 }
 
 .FeedPage-header-content .right {
@@ -147,6 +149,8 @@
     cursor: pointer;
     color: #f50d5a;
     background-color: var(--bg-color-section);
+
+    /* border: 1px solid white; */
 }
 
 .button-container button:hover {

@@ -4,22 +4,72 @@ import { useNavigate } from "react-router-dom";
 import "./pages_styles/WelcomePage.css";
 
 import { firestore } from "../firebase";
+import { doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 
 import logoDevsUnited from "../assets/logo-big-devsUnited.png";
 
 function WelcomePage({ dataGlobalUser}) {
 
-    //TODO: ENVIAR el userName y el color a Firebase correspondiente al usuario logueado
 
     const [firstName, setFirstName] = useState("");
     const [colorUser, setColorUser] = useState("");
     const [userName, setUserName] = useState("");
 
-    console.log(userName);
-    console.log(colorUser);
-
-
     const navigate = useNavigate();
+
+
+    //-----------------------------------------------------
+
+    // FUNCION PARA BUSCAR O CREAR UN NUEVO DOCUMENTO EN LA COLLECION USUARIOS DE FIREBASE
+
+    async function buscarOrCrearDocument( idDocumento ) {
+
+        // Crear referencia al documento
+        const docuRef = doc(firestore, `usuarios/${idDocumento}`)
+        
+        // buscar documento
+        const consulta = await getDoc(docuRef)
+
+        // revisar si existe
+
+        if(consulta.exists()){
+            // si si existe el documento
+            const infoDocu = consulta.data()
+
+            // return infoDocu.tareas
+            return infoDocu
+        }
+        else{
+            // si no existe el documento, lo creamos
+            await setDoc(docuRef, {userName: userName, colorUser: colorUser, posts:[]})
+
+            // luego volvemos a hacer la consulta
+            const consulta = await getDoc(docuRef)
+            
+            // retornamos ese documento creado
+            const infoDocu = consulta.data()
+
+            return infoDocu
+        }
+    }
+
+    useEffect(() => {
+      // creamos la funcion asincrona para que se ejecute luego de montarse el componente
+        if (dataGlobalUser){
+
+            const fetchInfoUser = async()=> {
+                // crearemos o buscaremos el documento basado en su id que sera el correo
+                await buscarOrCrearDocument(dataGlobalUser.email);
+            }
+
+            fetchInfoUser();
+        }
+
+    return () => {}
+    }, [])
+    
+//-----------------------------------------------------
+
 
     const handleChange = (e) => {
         setUserName(e.target.value);
@@ -49,16 +99,19 @@ function WelcomePage({ dataGlobalUser}) {
 
     const handleContinue = () => {
 
-        // TODO: eviar a firebase los valores de userName y de colorUser correspondiente a el ususario logueado
-
         if (userName !== "" && colorUser !== "") {
             // console.log("CONTINUE");
             navigate("/feed-page");
+
+            // manejamos el enviar el userName y el colorUser a Firebase
+            if(dataGlobalUser){
+                const docuRef = doc(firestore, `usuarios/${dataGlobalUser.email}`);
+                updateDoc(docuRef, {userName:userName, colorUser:colorUser, photo: dataGlobalUser.photoURL})
+            }
         }
-        
     };
 
-
+    // This useEffect is to set the First Name of the user provided by GOOGLE
     useEffect(() => {
         if (dataGlobalUser) {
             const firstName = dataGlobalUser.displayName.split(" ")[0];
@@ -67,6 +120,8 @@ function WelcomePage({ dataGlobalUser}) {
 
         return () => {};
     }, [dataGlobalUser]);
+
+
 
     return (
         <div className="WelcomePage-container">

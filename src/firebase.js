@@ -1,4 +1,7 @@
 // Import the functions you need from the SDKs you need
+
+// This code is based on Firebase Version 9
+
 import { initializeApp } from "firebase/app";
 
 import { getFirestore } from "firebase/firestore"; // import the firestore database from firebase
@@ -27,16 +30,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
-const firestore = getFirestore(app);
+export const firestore = getFirestore(app);
 
 // Initialize Authentication
 export const auth = getAuth(app);
 
 const googleProvider = new GoogleAuthProvider(); // para loguearnos con google.
 
-export const googlePopUp = async () =>
-    await signInWithPopup(auth, googleProvider);
-// export const googleRedirect = () =>  signInWithRedirect(auth, googleProvider);
+export const googlePopUp = async () => await signInWithPopup(auth, googleProvider);
+//export const googleRedirect = () =>  signInWithRedirect(auth, googleProvider);
 
 // () => de esta forma para que no se ejecute a penas cargue la pagina sino luego de dar click ; exportamos para usarlo en el boton de login con google
 

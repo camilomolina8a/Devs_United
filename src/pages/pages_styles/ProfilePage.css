@@ -91,12 +91,15 @@
     width: 100px;
     margin-bottom: 10px;
     border-radius: 50%;
-    border: 4px solid white;
+
 }
 .ProfilePage-header-content-up p {
+    padding:  2px 8px;
     font-size: 30px;
     font-family: "Silkscreen", sans-serif;
     color: rgba(255, 255, 255, 0.9);
+
+    border-radius: 0 0 0 10px;
 }
 .ProfilePage-header-content-down {
     display: flex;

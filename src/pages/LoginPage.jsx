@@ -29,10 +29,6 @@ function LoginPage() {
     }
 //-----------------------------------------------------------------------
 
-
-
-    
-
     return (
         <div className="LoginPage-container">
             <div className="LoginPage-left">

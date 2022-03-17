@@ -1,29 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import "../pages/pages_styles/ProfilePage.css";
 
-// import fakeUser from "../assets/fake-user.png";
 import backLogo from "../assets/back.png";
 import logoutLogo from "../assets/logout.png";
 
 import TweetCard from "../components/TweetCard";
 
-import { logout } from "../firebase.js";
-
+import { firestore, logout } from "../firebase.js";
+import { doc, getDoc } from "firebase/firestore";
 
 function ProfilePage({ dataGlobalUser }) {
-    
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    const [userName, setUserName] = useState(null);
+    const [colorUser, setColorUser] = useState(null);
 
     // To logout from google and the user will be redirected to the Login Page
     const Logout = () => {
-
-        
         logout();
-        navigate("/")
-    }
-    
+        navigate("/");
+    };
 
     const btnActivePosts = (btnID, otherBtnID) => {
         console.log("presionaste Posts");
@@ -58,9 +56,48 @@ function ProfilePage({ dataGlobalUser }) {
         //------------------------------------------------------
     };
 
-    if (dataGlobalUser) {
-        console.log(dataGlobalUser);
+    // Function to bring the userName and colorName from Firebase
+
+    async function searchUserNameColorUserFromFirebase(idDocument) {
+        // Crear referencia al documento
+        const docuRef = doc(firestore, `usuarios/${idDocument}`);
+
+        // buscar documento
+        const consulta = await getDoc(docuRef);
+
+        if (consulta.exists()) {
+            // si si existe el documento
+            const infoDocu = consulta.data();
+
+            return [infoDocu.userName, infoDocu.colorUser]
+        }
     }
+
+    useEffect(() => {
+        // creamos la funcion asincrona para que se ejecute luego de montarse el componente
+        // if (dataGlobalUser) {
+
+            const fetchInfoUser = async () => {
+                // crearemos o buscaremos el documento basado en su id que sera el correo
+                const data = await searchUserNameColorUserFromFirebase(dataGlobalUser.email);
+                setUserName(data[0]);
+                setColorUser(data[1]);
+                // seteamos el background color y el border del username del profile page basado en el color que registramos en firebase
+
+                const userNameElement = document.querySelector("#userName-profile");
+                userNameElement.style.setProperty("background-color",data[1])
+
+                const userPhotoElement = document.querySelector("#photo")
+                userPhotoElement.style.setProperty("border",`4px solid ${data[1]}`)
+            };
+            fetchInfoUser();
+
+        // }
+
+        return () => {};
+    }, []);
+
+
 
     return (
         <>
@@ -70,8 +107,8 @@ function ProfilePage({ dataGlobalUser }) {
                         className="ProfilePage-nav-content-left"
                         to="/feed-page"
                     >
-                        <img src={backLogo} alt="Back to Feed Page" />
-                        <p>USERNAME</p>
+                        <img src={backLogo} alt="Back to Feed Page"/>
+                        <p>{userName ? userName : "USERNAME"}</p>
                     </Link>
 
                     <div
@@ -90,8 +127,10 @@ function ProfilePage({ dataGlobalUser }) {
                         <img
                             src={dataGlobalUser && dataGlobalUser.photoURL}
                             alt=""
+                            id="photo"
+                
                         />
-                        <p>USERNAME</p>
+                        <p id="userName-profile">{userName ? userName : "USERNAME"}</p>
                     </div>
 
                     <div className="ProfilePage-header-content-down">

@@ -1,27 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import "./pages_styles/FeedPage.css";
 
-import fakeUser from "../assets/fake-user.png";
+import { firestore} from "../firebase.js";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
-function FeedPage({userName,colorUser}) {
+function FeedPage({ dataGlobalUser }) {
     const [currentLength, setCurrentLength] = useState(0);
+
+    //estado para re activar el useEffect luego de dar click en POST
+    const [isPost, setIsPost] = useState(true)
+
+    //texto a enviar a firebase
     const [text, setText] = useState("");
 
+    // informacion del usuario logueado proveniente de firebase
+    const [userInfoFirebase, setUserInfoFirebase] = useState(null);
+
+    //array con objetos de todos los posts correspondiente al usuaio logueado
+    const [arrayUserPosts, setArrayUserPosts] = useState();
+
+    // array que contiene todos los posts de todos los usuarios para ponerlos en el feed
+    // const [arrayAllPosts, setArrayAllPosts] = useState([]);
+
+    
     const handleInput = () => {
         let textElement = document.getElementById("fake-textarea");
-        //console.log(textElement);
-        //setText(textElement)
-
-        let innerHTML = textElement.innerHTML;
-        // setText(innerHTML)
-
         let innerText = textElement.innerText;
-        setText(innerText.trim());
 
-        let textContent = textElement.textContent;
-        //setText(textContent)
+        //set the text to send to firebase
+        setText(innerText.trim());
 
         //----------------------------------------------------------------
         // To fix the problem when the user clicks ENTER,
@@ -30,7 +39,7 @@ function FeedPage({userName,colorUser}) {
         // we can count correctly the length of the text
         // inside the fake text area
 
-        let currentLength = innerHTML.split("<div>");
+        let currentLength = textElement.innerHTML.split("<div>");
         currentLength = currentLength.join("");
         currentLength = currentLength.split("</div>");
         currentLength = currentLength.join("");
@@ -38,55 +47,116 @@ function FeedPage({userName,colorUser}) {
         currentLength = currentLength.length;
 
         // Update the state of the text length
-        console.log("longitud texto:", currentLength);
         setCurrentLength(currentLength);
-
-        //-----------------------------------------------------------------
-
-        //--------------------------------------------------------------------------------
-        // To clean the text inside the fake textarea to send it correctly to firebase
-
-        console.log("###########################################");
-
-        console.log(" === INNER HTML ===:");
-        console.log(innerHTML);
-
-        console.log("");
-
-        console.log("===INNER TEXT ===");
-
-        console.log(innerText);
-
-        console.log("");
-
-        console.log("=== TEXT CONTENT ===");
-        console.log(textContent);
-
-        console.log("###########################################");
-
-        //--------------------------------------------------------------------------------
-
-        // para agregar lo que este dentro del fake texarea al real textare
-
-        let textRealTexarea = document.querySelector("#description");
-        textRealTexarea.textContent = innerText;
-        console.log(textRealTexarea);
-
-        //--------------------------------------------------------------------------------
-        // if (textElement.hasChildNodes && cleanTextContent.length === 0 ) {
-        //     console.log(textElement.firstChild)
-        //     //textElement.removeChild(textElement.firstChild)
-        // }
-
-        //-------------------------------------------------------------------------------
     };
 
 
-    console.log("======================");
-    console.log("DESDE FEED");
-    console.log(userName);
-    console.log(colorUser);
-    console.log("======================");
+    const handleSendPost = () => {
+        
+        //seteamos setIsPost al contrario de su estado para re montar la pagina y que vuelva a traer la info de firebase
+
+        if (currentLength > 0) {
+
+            if(isPost){
+                setIsPost(false)
+                console.log(isPost);
+            }
+            else{
+                setIsPost(true);
+                console.log(isPost);
+            }
+            
+
+            console.log("ENVIAR:",text);
+            // para borrar la entrada de texto (se lo hace asi porque no es un texarea)
+            let textElement = document.getElementById("fake-textarea");
+            textElement.innerHTML = "";
+            // reseteamos el contador de letras
+            setCurrentLength(0);
+
+    //--------------------------------------------------------------------
+    //-------------- MANEJO DEL ENVIO DEL POST A FIREBASE ----------------
+
+        // Pasos que debe cumplir para funcionar:
+
+        //  Traer la informacion de todos los posts de ese usuario (al montarse esta pagina, en el useEffect la seteamos y esta info esta lista para usar)
+            console.log("---------------------------------------");
+            console.log("AL DAR CLICK ,userInfoFirebase");
+            
+
+        //  Agregar ese nuevo post a la lista de todos los posts del usuario.
+            
+
+            console.log("VIEJO ArrayUserPosts");
+            console.log(userInfoFirebase.posts);
+            console.log("NUEVO ArrayUserPosts");
+            console.log(...userInfoFirebase.posts,{id:new Date(), text:text});
+
+        //  Enviar esa Nueva listra de posts del usuario a firebase
+            
+            
+            const docuRef = doc(firestore, `usuarios/${dataGlobalUser.email}`);
+
+            updateDoc(docuRef, { posts: [...userInfoFirebase.posts,{id:new Date(), text:text}] });
+
+        //  Traer nuevamente la informacion de todos los posts de ese usuario
+
+            
+        //  Actualizar la lista actual de posts del usuario
+            
+            
+    //---------------------------------------------------------------------
+        }
+    };
+
+    // creamos una funcion para traer la informacion de firebase del usuario logueado
+
+    async function bringInfoUserFirebase(idDocument) {
+        // Crear referencia al documento
+        const docuRef = doc(firestore, `usuarios/${idDocument}`);
+
+        // buscar documento
+        const consulta = await getDoc(docuRef);
+
+        if (consulta.exists()) {
+            // si si existe el documento
+            const infoDocu = consulta.data();
+
+            return infoDocu;
+        }
+    }
+
+    useEffect(() => {
+
+        // creamos la funcion asincrona para que se ejecute luego de montarse el componente
+
+        // const desuscribir = () => {
+            if (dataGlobalUser) {
+
+                console.log("MONTANDO FEED PAGE");
+
+                const fetchInfoUser = async () => {
+                    // buscaremos el documento basado en su id que sera el correo
+                    const userInfo = await bringInfoUserFirebase(dataGlobalUser.email);
+                    console.log("POSTS CUANDO SE MONTA:");
+                    console.log(userInfo.posts);
+                    //seteamos esa informacion del usuario provista por firebase para usarla en otra parte de la pagina
+                    setUserInfoFirebase(userInfo)
+                    console.log("DATOS FIREBASE LISTOS PARA USAR");
+
+                    //seteamos todos los posts del usuario logueado
+                    setArrayUserPosts(userInfo.posts)
+                };
+                fetchInfoUser();
+            }
+        // };
+
+        return () => {
+            // desuscribir();
+            console.log("DESMONTANDO FEED PAGE");
+        };
+    }, [isPost] );
+
 
     return (
         <>
@@ -96,9 +166,12 @@ function FeedPage({userName,colorUser}) {
                         DEVS_<span>UNITED</span>
                     </h2>
 
-                    <Link className="nav-user-picture-container" to="/profile-page">
+                    <Link
+                        className="nav-user-picture-container"
+                        to="/profile-page"
+                    >
                         <img
-                            src={fakeUser}
+                            src={dataGlobalUser && dataGlobalUser.photoURL}
                             className="nav-user-picture"
                             alt="user profile"
                         />
@@ -110,7 +183,7 @@ function FeedPage({userName,colorUser}) {
                 <div className="FeedPage-header-content">
                     <div className="left">
                         <img
-                            src={fakeUser}
+                            src={dataGlobalUser && dataGlobalUser.photoURL}
                             className="header-user-picture"
                             alt="user profile"
                         />
@@ -138,7 +211,7 @@ function FeedPage({userName,colorUser}) {
                         </div>
 
                         <div className="button-container">
-                            <button>POST</button>
+                            <button onClick={handleSendPost}>POST</button>
                         </div>
                     </div>
                 </div>
