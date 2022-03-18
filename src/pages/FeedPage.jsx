@@ -19,7 +19,7 @@ function FeedPage({ dataGlobalUser }) {
     const [userInfoFirebase, setUserInfoFirebase] = useState(null);
 
     //array con objetos de todos los posts correspondiente al usuaio logueado
-    const [arrayUserPosts, setArrayUserPosts] = useState();
+    const [arrayUserPosts, setArrayUserPosts] = useState([]);
 
     // array que contiene todos los posts de todos los usuarios para ponerlos en el feed
     // const [arrayAllPosts, setArrayAllPosts] = useState([]);
@@ -83,27 +83,29 @@ function FeedPage({ dataGlobalUser }) {
             console.log("---------------------------------------");
             console.log("AL DAR CLICK ,userInfoFirebase");
             
-
         //  Agregar ese nuevo post a la lista de todos los posts del usuario.
             
-
             console.log("VIEJO ArrayUserPosts");
-            console.log(userInfoFirebase.posts);
+            console.log(arrayUserPosts);
             console.log("NUEVO ArrayUserPosts");
-            console.log(...userInfoFirebase.posts,{id:new Date(), text:text});
+            console.log(...arrayUserPosts,{id:new Date(), text:text});
 
         //  Enviar esa Nueva listra de posts del usuario a firebase
             
-            
             const docuRef = doc(firestore, `usuarios/${dataGlobalUser.email}`);
 
-            updateDoc(docuRef, { posts: [...userInfoFirebase.posts,{id:new Date(), text:text}] });
+            updateDoc(docuRef, { posts: [...arrayUserPosts,{id:new Date(), text:text}] });
 
         //  Traer nuevamente la informacion de todos los posts de ese usuario
 
-            
-        //  Actualizar la lista actual de posts del usuario
-            
+        const fetchInfoUser = async () => {
+            // buscaremos el documento basado en su id que sera el correo
+            const userInfo = await bringInfoUserFirebase(dataGlobalUser.email);
+            //  Actualizar la lista actual de posts del usuario
+            setArrayUserPosts(userInfo.posts)
+            console.log(arrayUserPosts);
+        };
+        fetchInfoUser();          
             
     //---------------------------------------------------------------------
         }
@@ -128,8 +130,6 @@ function FeedPage({ dataGlobalUser }) {
 
     useEffect(() => {
 
-        // creamos la funcion asincrona para que se ejecute luego de montarse el componente
-
         // const desuscribir = () => {
             if (dataGlobalUser) {
 
@@ -142,10 +142,10 @@ function FeedPage({ dataGlobalUser }) {
                     console.log(userInfo.posts);
                     //seteamos esa informacion del usuario provista por firebase para usarla en otra parte de la pagina
                     setUserInfoFirebase(userInfo)
-                    console.log("DATOS FIREBASE LISTOS PARA USAR");
 
-                    //seteamos todos los posts del usuario logueado
                     setArrayUserPosts(userInfo.posts)
+
+                    console.log("DATOS FIREBASE LISTOS PARA USAR");
                 };
                 fetchInfoUser();
             }
@@ -155,7 +155,7 @@ function FeedPage({ dataGlobalUser }) {
             // desuscribir();
             console.log("DESMONTANDO FEED PAGE");
         };
-    }, [isPost] );
+    }, [] );
 
 
     return (
