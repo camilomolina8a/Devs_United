@@ -11,11 +11,13 @@ import TweetCard from "../components/TweetCard";
 import { firestore, logout } from "../firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
-function ProfilePage({ dataGlobalUser }) {
+function ProfilePage({ dataGlobalUser, arrayGlobalPostsUserLogged }) {
     const navigate = useNavigate();
 
     const [userName, setUserName] = useState(null);
-    const [colorUser, setColorUser] = useState(null);
+
+    // para decidir que componente mostrar segun donde se de click en posts o favorites
+    const [showListOf, setShowListOf] = useState("posts");
 
     // To logout from google and the user will be redirected to the Login Page
     const Logout = () => {
@@ -37,6 +39,10 @@ function ProfilePage({ dataGlobalUser }) {
             otherBtn.classList.remove("btn-active");
         }
         //------------------------------------------------------
+
+        // para manejar el mostrar el componente que contiene la lista de todos los posts del usuario traidos desde firebase
+        //seteamos el estado a "posts" para mostrar ese componente
+        setShowListOf("posts");
     };
 
     const btnActiveFavorites = (btnID, otherBtnID) => {
@@ -54,6 +60,10 @@ function ProfilePage({ dataGlobalUser }) {
             otherBtn.classList.remove("btn-active");
         }
         //------------------------------------------------------
+
+        // para manejar el mostrar el componente que contiene la lista de todos los favorites del usuario traidos desde firebase
+        //seteamos el estado a "favorites" para mostrar ese componente
+        setShowListOf("favorites");
     };
 
     // Function to bring the userName and colorName from Firebase
@@ -69,35 +79,45 @@ function ProfilePage({ dataGlobalUser }) {
             // si si existe el documento
             const infoDocu = consulta.data();
 
-            return [infoDocu.userName, infoDocu.colorUser]
+            return [infoDocu.userName, infoDocu.colorUser];
         }
     }
 
     useEffect(() => {
+        console.log("MONTANDO PROFILE PAGE");
         // creamos la funcion asincrona para que se ejecute luego de montarse el componente
         // if (dataGlobalUser) {
 
-            const fetchInfoUser = async () => {
-                // crearemos o buscaremos el documento basado en su id que sera el correo
-                const data = await searchUserNameColorUserFromFirebase(dataGlobalUser.email);
-                setUserName(data[0]);
-                setColorUser(data[1]);
-                // seteamos el background color y el border del username del profile page basado en el color que registramos en firebase
+        const fetchInfoUser = async () => {
+            // crearemos o buscaremos el documento basado en su id que sera el correo
+            const data = await searchUserNameColorUserFromFirebase(
+                dataGlobalUser.email
+            );
+            setUserName(data[0]);
+            // seteamos el background color y el border del username del profile page basado en el color que registramos en firebase
 
-                const userNameElement = document.querySelector("#userName-profile");
-                userNameElement.style.setProperty("background-color",data[1])
+            const userNameElement = document.querySelector("#userName-profile");
+            userNameElement.style.setProperty("background-color", data[1]);
 
-                const userPhotoElement = document.querySelector("#photo")
-                userPhotoElement.style.setProperty("border",`4px solid ${data[1]}`)
-            };
-            fetchInfoUser();
+            const userPhotoElement = document.querySelector("#photo");
+            userPhotoElement.style.setProperty(
+                "border",
+                `4px solid ${data[1]}`
+            );
+        };
+        fetchInfoUser();
+
+        if (arrayGlobalPostsUserLogged) {
+            console.log("ARRAYS USER GLOBAL ");
+            console.log(arrayGlobalPostsUserLogged);
+        }
 
         // }
 
-        return () => {};
+        return () => {
+            console.log("DESMONTANDO PROFILE PAGE");
+        };
     }, []);
-
-
 
     return (
         <>
@@ -107,7 +127,7 @@ function ProfilePage({ dataGlobalUser }) {
                         className="ProfilePage-nav-content-left"
                         to="/feed-page"
                     >
-                        <img src={backLogo} alt="Back to Feed Page"/>
+                        <img src={backLogo} alt="Back to Feed Page" />
                         <p>{userName ? userName : "USERNAME"}</p>
                     </Link>
 
@@ -128,9 +148,10 @@ function ProfilePage({ dataGlobalUser }) {
                             src={dataGlobalUser && dataGlobalUser.photoURL}
                             alt=""
                             id="photo"
-                
                         />
-                        <p id="userName-profile">{userName ? userName : "USERNAME"}</p>
+                        <p id="userName-profile">
+                            {userName ? userName : "USERNAME"}
+                        </p>
                     </div>
 
                     <div className="ProfilePage-header-content-down">
@@ -158,10 +179,18 @@ function ProfilePage({ dataGlobalUser }) {
 
             <section className="ProfilePage-section">
                 <div className="ProfilePage-section-content">
-                    {/* <TweetCard/>
-                    <TweetCard/>
-                    <TweetCard/>
-                    <TweetCard/> */}
+
+                    {
+                        showListOf === "posts" ? (
+
+                            <PostsList arrayGlobalPostsUserLogged={arrayGlobalPostsUserLogged}/>
+
+                        ) : (
+
+                        showListOf === "favorites" && <FavoritesList />
+
+                        )
+                    }
                 </div>
             </section>
         </>
@@ -170,8 +199,28 @@ function ProfilePage({ dataGlobalUser }) {
 
 export default ProfilePage;
 
-function PostsList() {
-    return <h1>Post List</h1>;
+
+
+function PostsList({ arrayGlobalPostsUserLogged }) {
+
+    return (
+        <>
+            <h1>Post List</h1>
+
+            {arrayGlobalPostsUserLogged.map((objPost) => {
+
+                return (
+
+                    <TweetCard
+                        userName={objPost.username}
+                        text={objPost.text}
+                        key={objPost.id}
+                        likes={objPost.likes}
+                    />
+                )
+            })}
+        </>
+    );
 }
 
 function FavoritesList() {

@@ -8,8 +8,7 @@ import delete_logo from "../assets/delete.png";
 import like_red from "../assets/heart-red.png";
 import like_white from "../assets/heart-white.png";
 
-const TweetCard = () => {
-    const [like, setLike] = useState(false);
+const TweetCard = ({userName, text, likes}) => {
 
     return (
         <>
@@ -22,7 +21,7 @@ const TweetCard = () => {
                     <div className="TweetCard-content-title">
                         <div className="TweetCard-content-title-head">
                             <div>
-                                <span className="title">USERNAME</span>
+                                <span className="title">{userName}</span>
                             </div>
                             <div>
                                 <span className="date">- 5 jun</span>
@@ -30,25 +29,23 @@ const TweetCard = () => {
                         </div>
 
                         <p className="text">
-                            Hola este es un ejemplo de texto de como
-                            Hola este es un ejemplo de texto de como
-                            Hola este es un ejemplo de texto de como
-                            Hola este es un ejemplo de texto de como
-                            Hola este es un ejemplo de texto de como
+                            
+                            {text}
                             
                         </p>
                     </div>
 
                     <img
-                        src={like ? like_white : like_red}
+                        src={likes ? like_white : like_red}
                         alt="like"
                         className="TweetCard-content-like"
+                        onClick={()=>console.log("LIKE")}
                     />
                     <span className="current-likes">100</span>
                 </div>
 
                 <div className="TweetCard-delete">
-                    <img src={delete_logo} alt="Trash can" onClick={like} />
+                    <img src={delete_logo} alt="Trash can" onClick={()=> console.log("DELETE")} />
                 </div>
             </div>
         </>

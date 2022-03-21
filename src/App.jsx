@@ -16,9 +16,12 @@ function App() {
     // *estados globales para usarlos en todos los componentes .
 
     const [dataGlobalUser, setDataGlobalUser] = useState(null); // Global variable ; User data provided by Google when the user is logged.
-
     console.log(dataGlobalUser);
 
+    // Array con todos los posts del usuario logueado (se lo setea desde Feed PAge)
+    const [arrayGlobalPostsUserLogged, setArrayGlobalPostsUserLogged] = useState([])
+
+    
     //-----------------------------------------------------------------------
     useEffect(() => {
         const desuscribir = onAuthStateChanged(auth, (firebaseUser) => {
@@ -49,11 +52,11 @@ function App() {
                 />
                 <Route
                     path="/feed-page"
-                    element={<FeedPage dataGlobalUser={dataGlobalUser} />}
+                    element={<FeedPage dataGlobalUser={dataGlobalUser} setArrayGlobalPostsUserLogged={setArrayGlobalPostsUserLogged}/>}
                 />
                 <Route
                     path="/profile-page"
-                    element={<ProfilePage dataGlobalUser={dataGlobalUser} />}
+                    element={<ProfilePage dataGlobalUser={dataGlobalUser} arrayGlobalPostsUserLogged={arrayGlobalPostsUserLogged} />}
                 />
                 <Route path="*" element={<h1> 404: RUTA NO ENCONTRADA</h1>} />
             </Routes>

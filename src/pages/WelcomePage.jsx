@@ -41,7 +41,7 @@ function WelcomePage({ dataGlobalUser}) {
         }
         else{
             // si no existe el documento, lo creamos
-            await setDoc(docuRef, {userName: userName, colorUser: colorUser, posts:[]})
+            await setDoc(docuRef, {userName: userName, color: colorUser, posts:[]})
 
             // luego volvemos a hacer la consulta
             const consulta = await getDoc(docuRef)
