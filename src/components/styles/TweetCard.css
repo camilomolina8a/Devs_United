@@ -20,14 +20,10 @@
     justify-content: center;
     align-items: flex-start;
     width: 15%;
-    /* margin-top: 25px; */
-
-    /* border: 1px solid green; */
-
 }
 .TweetCard-picture img {
     width: 70%;
-    /* border: 1px solid green; */
+    border-radius: 50%;
 }
 
 /*-----------------------------------------------------------*/
@@ -40,9 +36,7 @@
     font-family: "Fira Code", monospace;
     font-size: 18px;
     color: rgba(255, 255, 255, 0.9);
-    /* padding: 0 10px; */
-
-    /* border: 1px solid green; */
+    
 }
 .TweetCard-content-title{
     width: 100%;
@@ -58,25 +52,42 @@
 
     font-weight: 700;
     font-size: 20px;
-    /* text-align: center; */
     font-family: "Silkscreen", sans-serif;
-    color: var( --bg-color-section);
+    color: var( --bg-color-section);    
 
-    /* border: 1px solid white; */
-    
-    background: yellow;
-
-    /* background-color: yellow; ! Este color debe ser cambiado dinamicamente con el color que el usuarui selecciona desde el inicio al loguearse  */
 }
+/*================================================================*/
+/*Para cambiar el color de fondo de los username segun el color escogido y ese color se setea en al atributo */
+.title[data-color="#F50D5A"] {
+    background-color: #F50D5A;
+}
+.title[data-color="#FF865C"] {
+    background-color: #FF865C;
+}
+.title[data-color="#FFEA5C"] {
+    background-color: #FFEA5C;
+}
+.title[data-color="#00DA76"] {
+    background-color: #00DA76;
+}
+.title[data-color="#0096CE"] {
+    background-color: #0096CE;
+}
+.title[data-color="#800FFF"] {
+    background-color: #800FFF;
+}
+/*================================================================*/
+
+
+
 .TweetCard-content-title-head .date {
     padding: 5px;
-    /* border: 1px solid white; */
 }
 
 .TweetCard-content-title .text {
     padding-left: 5px;
     margin: 20px 0;
-    /* border: 1px solid green; */
+    word-wrap: break-word;
 }
 
 .TweetCard-content-like {
@@ -84,12 +95,11 @@
     margin-right: 10px;
     margin-bottom: 25px;
     padding-left: 5px;
-    height: 24px;
+    height: 20px;
     cursor: pointer;
 }
 .current-likes {
     margin-top: 10px;
-    /* border: 1px solid whitesmoke; */
 }
 
 /*-----------------------------------------------------------*/
@@ -99,10 +109,8 @@
     justify-content: flex-end;
     height: 100%;
     width: 5%;
-    /* margin-top: 25px; */
     cursor: pointer;
 
-    /* border: 1px solid green; */
 }
 .TweetCard-delete img {
     width: 24px;

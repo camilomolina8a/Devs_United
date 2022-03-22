@@ -201,7 +201,7 @@ export default ProfilePage;
 
 
 
-function PostsList({ arrayGlobalPostsUserLogged }) {
+function PostsList({ arrayGlobalPostsUserLogged , dataGlobalUser}) {
 
     return (
         <>
@@ -212,10 +212,15 @@ function PostsList({ arrayGlobalPostsUserLogged }) {
                 return (
 
                     <TweetCard
-                        userName={objPost.username}
+                        photo={objPost.photo}
+                        userName={objPost.userName}
                         text={objPost.text}
                         key={objPost.id}
                         likes={objPost.likes}
+                        colorUser= {objPost.colorUser}
+                        id={objPost.id}
+                        email={objPost.email}
+                        dataGlobalUser={dataGlobalUser}
                     />
                 )
             })}

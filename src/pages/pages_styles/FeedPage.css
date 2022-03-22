@@ -162,8 +162,13 @@
 .FeedPage-section {
     display: flex;
     justify-content: center;
-    height: 66vh;
     width: 100%;
     border-top: 2px solid #914D8B;
     border: 1px solid white;    
+}
+
+.Feed-section-content {
+
+    width: 50%;
+    border: 1px solid white;
 }

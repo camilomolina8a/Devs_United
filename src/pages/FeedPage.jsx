@@ -4,9 +4,22 @@ import { Link } from "react-router-dom";
 import "./pages_styles/FeedPage.css";
 
 import { firestore } from "../firebase.js";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+    doc,
+    getDoc,
+    updateDoc,
+    collection,
+    getDocs,
+} from "firebase/firestore";
 
-function FeedPage({ dataGlobalUser, setArrayGlobalPostsUserLogged }) {
+import TweetCard from "../components/TweetCard";
+
+function FeedPage({
+    dataGlobalUser,
+    setArrayGlobalPostsUserLogged,
+    setArrayGlobalAllUsersPosts,
+    arrayGlobalAllUsersPosts,
+}) {
     const [currentLength, setCurrentLength] = useState(0);
 
     //estado para re activar el useEffect luego de dar click en POST
@@ -20,9 +33,6 @@ function FeedPage({ dataGlobalUser, setArrayGlobalPostsUserLogged }) {
 
     //array con objetos de todos los posts correspondiente al usuaio logueado
     const [arrayUserPosts, setArrayUserPosts] = useState([]);
-
-    // array que contiene todos los posts de todos los usuarios para ponerlos en el feed
-    // const [arrayAllPosts, setArrayAllPosts] = useState([]);
 
     const handleInput = () => {
         let textElement = document.getElementById("fake-textarea");
@@ -79,11 +89,16 @@ function FeedPage({ dataGlobalUser, setArrayGlobalPostsUserLogged }) {
             console.log("VIEJO ArrayUserPosts");
             console.log(arrayUserPosts);
             console.log("NUEVO ArrayUserPosts");
-            console.log([...arrayUserPosts, {
-                id: new Date(),
-                text: text,
-                likes: 0,
-            }]);
+            console.log([
+                ...arrayUserPosts,
+                {
+                    id: new Date(),
+                    text: text,
+                    likes: 0,
+                    userName: userInfoFirebase.userName,
+                    colorUser: userInfoFirebase.colorUser,
+                },
+            ]);
 
             //  Enviar esa Nueva listra de posts del usuario a firebase
 
@@ -94,16 +109,16 @@ function FeedPage({ dataGlobalUser, setArrayGlobalPostsUserLogged }) {
                     ...arrayUserPosts,
                     {
                         id: new Date(),
+                        postDate: new Date(),
+                        photo: userInfoFirebase.photo,
+                        email: dataGlobalUser.email,
                         text: text,
                         likes: 0,
-                        // username: userInfoFirebase.userName,
-                        // color: userInfoFirebase.colorUser,
+                        userName: userInfoFirebase.userName,
+                        colorUser: userInfoFirebase.colorUser,
                     },
                 ],
             });
-            
-
-            //  Traer nuevamente la informacion de todos los posts de ese usuario
 
             //---------------------------------------------------------------------
         }
@@ -126,28 +141,45 @@ function FeedPage({ dataGlobalUser, setArrayGlobalPostsUserLogged }) {
         }
     }
 
+    // funcion para traer y almacenar luego los posts de usuario logueado al array global de todos los posts de todos los usuarios
+    async function bringAllCollectionPosts() {
+        const dataCollection = await getDocs(collection(firestore, "usuarios"));
+
+        const arrayAllPost = [];
+
+        dataCollection.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.data().posts);
+            arrayAllPost.push(...doc.data().posts);
+        });
+
+        console.log("arrayAllPOst");
+        console.log(arrayAllPost);
+        setArrayGlobalAllUsersPosts(arrayAllPost);
+    }
+
     useEffect(() => {
         console.log("MONTANDO FEED PAGE");
         // const desuscribir = () => {
-            if (dataGlobalUser) {
+        if (dataGlobalUser) {
+            const fetchInfoUser = async () => {
+                // buscaremos el documento basado en su id que sera el correo
+                const userInfo = await bringInfoUserFirebase(
+                    dataGlobalUser.email
+                );
+                console.log("POSTS CUANDO SE MONTA:");
+                console.log(userInfo.posts);
+                // seteamos el array con todos los posts traidos de firebase para usarlos de manera global
+                setArrayGlobalPostsUserLogged(userInfo.posts);
+                //seteamos esa informacion del usuario provista por firebase para usarla en otra parte de la pagina
+                setUserInfoFirebase(userInfo);
 
-                const fetchInfoUser = async () => {
-                    // buscaremos el documento basado en su id que sera el correo
-                    const userInfo = await bringInfoUserFirebase(
-                        dataGlobalUser.email
-                    );
-                    console.log("POSTS CUANDO SE MONTA:");
-                    console.log(userInfo.posts);
-                    // seteamos el array con todos los posts traidos de firebase para usarlos de manera global
-                    setArrayGlobalPostsUserLogged(userInfo.posts);
-                    //seteamos esa informacion del usuario provista por firebase para usarla en otra parte de la pagina
-                    setUserInfoFirebase(userInfo);
+                setArrayUserPosts(userInfo.posts);
+            };
 
-                    setArrayUserPosts(userInfo.posts);
-                };
-
-                fetchInfoUser();
-            }
+            fetchInfoUser();
+            bringAllCollectionPosts();
+        }
         // };
 
         return () => {
@@ -216,12 +248,36 @@ function FeedPage({ dataGlobalUser, setArrayGlobalPostsUserLogged }) {
             </header>
 
             <section className="FeedPage-section">
-                {/* <div>
-                    <pre>{text}</pre>
-                </div> */}
+                <div className="Feed-section-content">
+                    {arrayGlobalAllUsersPosts ? (
+                        <FeedList
+                            arrayGlobalAllUsersPosts={arrayGlobalAllUsersPosts}
+                        />
+                    ) : (
+                        <h1>No POsts</h1>
+                    )}
+                </div>
             </section>
         </>
     );
 }
 
 export default FeedPage;
+
+function FeedList({ arrayGlobalAllUsersPosts }) {
+    return arrayGlobalAllUsersPosts.map((post) => {
+
+        return (
+            <TweetCard
+                key={post.id}
+                photo={post.photo}
+                userName={post.userName}
+                text={post.text}
+                likes={post.likes}
+                colorUser={post.colorUser}
+                id={post.id}
+                email={post.email}
+            />
+        )
+    });
+}

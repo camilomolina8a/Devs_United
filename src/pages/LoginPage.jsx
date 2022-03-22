@@ -16,16 +16,11 @@ function LoginPage() {
 //-----------------------------------------------------------------------
     const handleClick = async () => {
 
-        // console.log("DIste click");
-
         const data = await googlePopUp();
         if(data){
             // console.log("SIGUIENTEEEEE");
             navigate("/welcome-page")
         }
-        
-        
-
     }
 //-----------------------------------------------------------------------
 
