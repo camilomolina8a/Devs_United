@@ -28,7 +28,7 @@ const TweetCard = ({
     const [currentLike, setCurrentLike] = useState(likes)
 
 
-    const handleLikes = (id) => {
+    const handleLikes = (id) => { 
 
         if(refreshDueLike) {
             setRefreshDueLike(false);
@@ -86,8 +86,37 @@ const TweetCard = ({
 
     const handleDelete = (id) => {
         console.log("Delete id",id);
-        // if(dataGlobalUser.email)
+
+        async function bringInfoUserFirebase(idDocument) {
+        
+            const docuRef = doc(firestore, `usuarios/${idDocument}`);
+
+            const consulta = await getDoc(docuRef);
+
+            if (consulta.exists()) {
+                
+                const infoDocu = consulta.data();
+
+            return infoDocu;
+            }
+        }
+
+        const fetchInfo = async () => {
+
+            const infoUser = await bringInfoUserFirebase(email);
+
+            const infoUserPosts = infoUser.posts
+
+            const newArray = infoUserPosts.filter((objeto)=> objeto.id !== id)
+        
+            const docuRef = doc(firestore, `usuarios/${email}`);
+
+            updateDoc( docuRef, {  posts: [...newArray]  } ); 
+        }
+        fetchInfo();
     };
+
+
 
     //Function to display the date when the tweet was published
     function dayAndMonth(number) {

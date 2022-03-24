@@ -16,7 +16,6 @@ function App() {
     // *estados globales para usarlos en todos los componentes .
 
     const [dataGlobalUser, setDataGlobalUser] = useState(null); // Global variable ; User data provided by Google when the user is logged.
-    console.log(dataGlobalUser);
 
     // Array con todos los posts del usuario logueado (se lo setea desde Feed PAge)
     const [arrayGlobalPostsUserLogged, setArrayGlobalPostsUserLogged] =
@@ -32,7 +31,7 @@ function App() {
         const desuscribir = onAuthStateChanged(auth, (firebaseUser) => {
             if (firebaseUser) {
                 setDataGlobalUser(firebaseUser);
-                console.log(firebaseUser);
+                // console.log(firebaseUser);
             } else {
                 console.log("NO Logueado");
             }

@@ -280,6 +280,7 @@ function FeedPage({
 export default FeedPage;
 
 function FeedList({ arrayGlobalAllUsersPosts ,setRefreshDueLike,refreshDueLike,dataGlobalUser}) {
+    
     return arrayGlobalAllUsersPosts.map((post) => {
 
         return (
