@@ -220,6 +220,7 @@ function PostsList({ arrayGlobalPostsUserLogged , dataGlobalUser}) {
                         colorUser= {objPost.colorUser}
                         id={objPost.id}
                         email={objPost.email}
+                        postDate={objPost.postDate}
                         dataGlobalUser={dataGlobalUser}
                     />
                 )

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 
 import "./styles/TweetCard.css";
 
@@ -7,64 +7,100 @@ import delete_logo from "../assets/delete.png";
 import like_red from "../assets/heart-red.png";
 import like_white from "../assets/heart-white.png";
 
-const TweetCard = ({ photo, userName, text, likes, colorUser, id ,email}) => {
+import {doc, getDoc, updateDoc} from 'firebase/firestore';
+import { firestore } from "../firebase";
+
+const TweetCard = ({
+    dataGlobalUser,
+    photo,
+    userName,
+    text,
+    likes,
+    colorUser,
+    id,
+    email,
+    postDate,
+    setRefreshDueLike,
+    refreshDueLike
+}) => {
+
+
+    const [currentLike, setCurrentLike] = useState(likes)
+
 
     const handleLikes = (id) => {
-        const numberLikes = likes;
 
-        console.log(numberLikes, +id);
+        if(refreshDueLike) {
+            setRefreshDueLike(false);
+        }
+        else{
+            setRefreshDueLike(true);
+        }
+
+        // funcion que retorna un array actualizado, el cual actualiza el objeto del tweet que fue likeado 
+        function arrayUpdatedLiked(array,id){
+
+            array.map( (objeto) =>{
+                if(objeto.id === id){
+                    objeto.likes = currentLike + 1
+                }
+            })
+            return array
+        }   
+        // --------------------
+
+        async function bringInfoUserFirebase(idDocument) {
+        
+            const docuRef = doc(firestore, `usuarios/${idDocument}`);
+
+            const consulta = await getDoc(docuRef);
+
+            if (consulta.exists()) {
+                
+                const infoDocu = consulta.data();
+
+            return infoDocu;
+            }
+        }
+
+        const fetchInfo = async () => {
+
+            const infoUser = await bringInfoUserFirebase(email);
+
+            const infoUserPosts = infoUser.posts
+        
+            console.log(arrayUpdatedLiked(infoUserPosts,id))
+
+            const docuRef = doc(firestore, `usuarios/${email}`);
+
+            updateDoc( docuRef, {  posts: [...arrayUpdatedLiked(infoUserPosts,id)]  } ); 
+
+            setCurrentLike(currentLike + 1)
+            console.log(likes,"id:" , id);
+        }
+        fetchInfo();
+        // --------------------            
         
     };
 
+
     const handleDelete = (id) => {
+        console.log("Delete id",id);
         // if(dataGlobalUser.email)
     };
 
-    // cambiar el color de fondo del nombre segun el color seleccionado
+    //Function to display the date when the tweet was published
+    function dayAndMonth(number) {
+        let date = new Date(number);
+        let dateString = date.toDateString();
+        let arrayDate = dateString.split(" ");
 
-    useEffect(() => {
-
-        if (colorUser) {
-
-            /*
-            elem.hasAttribute(nombre) – comprueba si existe.
-            elem.getAttribute(nombre) – obtiene el valor.
-            elem.setAttribute(nombre, valor) – establece el valor.
-            elem.removeAttribute(nombre) – elimina el atributo.
-
-            <html>
-                <body>
-                <p id="color">Azul</p>
-
-                <script>
-                    var color = document.getElementById("color").innerHTML;
-                    if (color == "Azul") {
-                    document.getElementById("color").style.backgroundColor = "#0000FF";
-                    }
-                    if (color == "Rojo") {
-                    document.getElementById("color").style.backgroundColor = "#FF0000";
-                    }
-                </script>
-                </body>
-            </html>
-            */
-
-            // const userNameElement = document.querySelectorAll(".title");
-            // userNameElement.style.setProperty("background-color", colorUser);
-            
-            const elementNombre = document.getElementById("title").innerHTML
-            console.log(elementNombre)
-
-        }
-
-        return () => {};
-    }, [colorUser]);
-
-
+        return `${arrayDate[1]} ${arrayDate[2]}`;
+    }
 
     return (
         <>
-            <div className="TweetCard" >
+            <div className="TweetCard">
                 <div className="TweetCard-picture">
                     <img src={photo} alt="User profile" />
                 </div>
@@ -73,10 +109,18 @@ const TweetCard = ({ photo, userName, text, likes, colorUser, id ,email}) => {
                     <div className="TweetCard-content-title">
                         <div className="TweetCard-content-title-head">
                             <div>
-                                <span className="title" id="title" data-color={colorUser}>{userName}</span>
+                                <span
+                                    className="title"
+                                    id="title"
+                                    data-color={colorUser}
+                                >
+                                    {userName}
+                                </span>
                             </div>
                             <div>
-                                <span className="date">- 5 jun</span>
+                                <span className="date">
+                                    {dayAndMonth(postDate)}
+                                </span>
                             </div>
                         </div>
 
@@ -84,20 +128,27 @@ const TweetCard = ({ photo, userName, text, likes, colorUser, id ,email}) => {
                     </div>
 
                     <img
-                        src={likes ? like_white : like_red}
+                        src={currentLike === 0 ? like_white : like_red}
                         alt="like"
                         className="TweetCard-content-like"
                         onClick={() => handleLikes(id)}
                     />
-                    <span className="current-likes">{likes}</span>
+                    <span className="current-likes">{currentLike}</span>
                 </div>
 
                 <div className="TweetCard-delete">
-                    <img
-                        src={delete_logo}
-                        alt="Trash can"
-                        onClick={ () => handleDelete(id)}
-                    />
+
+                    {dataGlobalUser && [
+                        dataGlobalUser.email === email ? (
+                            <img
+                                src={delete_logo}
+                                alt="Trash can"
+                                onClick={() => handleDelete(id)}
+                            />
+                        ) : <div></div> ]
+                    }
+                        
+                    
                 </div>
             </div>
         </>
