@@ -21,10 +21,15 @@ function App() {
     const [arrayGlobalPostsUserLogged, setArrayGlobalPostsUserLogged] =
         useState([]);
 
+    // Array con todos los favorites del usuario logueado ( cuando el usuario da like a un post se lo almacena aqui)
+    const [arrayGlobalFavoritesUserLogged, setArrayGlobalFavoritesUserLogged] =
+        useState([]);
+
     // Array con todos los posts de todos los usuarios
     const [arrayGlobalAllUsersPosts, setArrayGlobalAllUsersPosts] = useState(
         []
     );
+
 
     //-----------------------------------------------------------------------
     useEffect(() => {
@@ -66,6 +71,9 @@ function App() {
                                 setArrayGlobalAllUsersPosts
                             }
                             arrayGlobalAllUsersPosts={arrayGlobalAllUsersPosts}
+
+                            setArrayGlobalFavoritesUserLogged={setArrayGlobalFavoritesUserLogged}
+                            arrayGlobalFavoritesUserLogged={arrayGlobalFavoritesUserLogged}
                         />
                     }
                 />
@@ -77,6 +85,10 @@ function App() {
                             arrayGlobalPostsUserLogged={
                                 arrayGlobalPostsUserLogged
                             }
+                            setArrayGlobalPostsUserLogged={setArrayGlobalPostsUserLogged}
+
+                            arrayGlobalFavoritesUserLogged={arrayGlobalFavoritesUserLogged}
+                            setArrayGlobalFavoritesUserLogged={setArrayGlobalFavoritesUserLogged}
                         />
                     }
                 />

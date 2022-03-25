@@ -20,7 +20,11 @@ function FeedPage({
     setArrayGlobalPostsUserLogged,
     setArrayGlobalAllUsersPosts,
     arrayGlobalAllUsersPosts,
+
+    setArrayGlobalFavoritesUserLogged,
+    arrayGlobalFavoritesUserLogged
 }) {
+
     const [currentLength, setCurrentLength] = useState(0);
 
     //estado para re activar el useEffect luego de dar click en POST
@@ -34,11 +38,6 @@ function FeedPage({
 
     //array con objetos de todos los posts correspondiente al usuaio logueado
     const [arrayUserPosts, setArrayUserPosts] = useState([]);
-
-    // estado para poder volver a cargar todos los posts del feed al momento que doy like a uno de los post
-    const [refreshDueLike, setRefreshDueLike] = useState(true)
-
-
 
 
     const handleInput = () => {
@@ -93,20 +92,20 @@ function FeedPage({
 
             //  Agregar ese nuevo post a la lista de todos los posts del usuario.
 
-            console.log("VIEJO ArrayUserPosts");
-            console.log(arrayUserPosts);
-            console.log("NUEVO ArrayUserPosts");
-            console.log([
-                ...arrayUserPosts,
-                {
-                    id: Date.now(),
-                    fecha:Date.now(),
-                    text: text,
-                    likes: 0,
-                    userName: userInfoFirebase.userName,
-                    colorUser: userInfoFirebase.colorUser,
-                },
-            ]);
+            // console.log("VIEJO ArrayUserPosts");
+            // console.log(arrayUserPosts);
+            // console.log("NUEVO ArrayUserPosts");
+            // console.log([
+            //     ...arrayUserPosts,
+            //     {
+            //         id: Date.now(),
+            //         fecha:Date.now(),
+            //         text: text,
+            //         likes: 0,
+            //         userName: userInfoFirebase.userName,
+            //         colorUser: userInfoFirebase.colorUser,
+            //     },
+            // ]);
 
             //  Enviar esa Nueva listra de posts del usuario a firebase
 
@@ -157,12 +156,12 @@ function FeedPage({
 
         dataCollection.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
-            console.log(doc.data().posts);
+            // console.log(doc.data().posts);
             arrayAllPost.push(...doc.data().posts);
         });
 
-        console.log("arrayAllPOst");
-        console.log(arrayAllPost);
+        // console.log("arrayAllPOst");
+        // console.log(arrayAllPost);
         setArrayGlobalAllUsersPosts(arrayAllPost);
     }
 
@@ -177,8 +176,8 @@ function FeedPage({
                     const userInfo = await bringInfoUserFirebase(
                         dataGlobalUser.email
                     );
-                    console.log("POSTS CUANDO SE MONTA:");
-                    console.log(userInfo.posts);
+                    // console.log("POSTS CUANDO SE MONTA:");
+                    // console.log(userInfo.posts);
                     // seteamos el array con todos los posts traidos de firebase para usarlos de manera global
                     setArrayGlobalPostsUserLogged(userInfo.posts);
                     //seteamos esa informacion del usuario provista por firebase para usarla en otra parte de la pagina
@@ -198,7 +197,7 @@ function FeedPage({
             console.log("DESMONTANDO FEED PAGE");
         };
 
-    }, [isPost,refreshDueLike]);
+    }, [isPost]);
 
     return (
         <>
@@ -264,8 +263,6 @@ function FeedPage({
                     {arrayGlobalAllUsersPosts ? (
                         <FeedList
                             arrayGlobalAllUsersPosts={arrayGlobalAllUsersPosts}
-                            setRefreshDueLike={setRefreshDueLike}
-                            refreshDueLike={refreshDueLike}
                             dataGlobalUser={dataGlobalUser}
                         />
                     ) : (
@@ -279,8 +276,8 @@ function FeedPage({
 
 export default FeedPage;
 
-function FeedList({ arrayGlobalAllUsersPosts ,setRefreshDueLike,refreshDueLike,dataGlobalUser}) {
-    
+function FeedList({ arrayGlobalAllUsersPosts ,dataGlobalUser}) {
+
     return arrayGlobalAllUsersPosts.map((post) => {
 
         return (
@@ -295,9 +292,6 @@ function FeedList({ arrayGlobalAllUsersPosts ,setRefreshDueLike,refreshDueLike,d
                 email={post.email}
                 postDate={post.postDate}
                 arrayGlobalAllUsersPosts={arrayGlobalAllUsersPosts}
-
-                setRefreshDueLike={setRefreshDueLike}
-                refreshDueLike={refreshDueLike}
                 dataGlobalUser={dataGlobalUser}
             />
         )

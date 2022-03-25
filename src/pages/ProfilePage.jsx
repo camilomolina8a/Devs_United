@@ -9,9 +9,14 @@ import logoutLogo from "../assets/logout.png";
 import TweetCard from "../components/TweetCard";
 
 import { firestore, logout } from "../firebase.js";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, collection } from "firebase/firestore";
 
-function ProfilePage({ dataGlobalUser, arrayGlobalPostsUserLogged }) {
+function ProfilePage({
+    dataGlobalUser,
+    arrayGlobalPostsUserLogged,
+    setArrayGlobalFavoritesUserLogged,
+    arrayGlobalFavoritesUserLogged,
+}) {
     const navigate = useNavigate();
 
     const [userName, setUserName] = useState(null);
@@ -86,36 +91,63 @@ function ProfilePage({ dataGlobalUser, arrayGlobalPostsUserLogged }) {
     useEffect(() => {
         console.log("MONTANDO PROFILE PAGE");
         // creamos la funcion asincrona para que se ejecute luego de montarse el componente
-        // if (dataGlobalUser) {
 
-        const fetchInfoUser = async () => {
-            // crearemos o buscaremos el documento basado en su id que sera el correo
-            const data = await searchUserNameColorUserFromFirebase(
-                dataGlobalUser.email
-            );
-            setUserName(data[0]);
-            // seteamos el background color y el border del username del profile page basado en el color que registramos en firebase
+        const desuscribir = onSnapshot(
+            collection(firestore, "usuarios"),
+            () => {
+                const fetchInfoUser = async () => {
+                    // crearemos o buscaremos el documento basado en su id que sera el correo
+                    const data = await searchUserNameColorUserFromFirebase(
+                        dataGlobalUser.email
+                    );
+                    setUserName(data[0]);
+                    // seteamos el background color y el border del username del profile page basado en el color que registramos en firebase
 
-            const userNameElement = document.querySelector("#userName-profile");
-            userNameElement.style.setProperty("background-color", data[1]);
+                    const userNameElement =
+                        document.querySelector("#userName-profile");
+                    userNameElement.style.setProperty(
+                        "background-color",
+                        data[1]
+                    );
 
-            const userPhotoElement = document.querySelector("#photo");
-            userPhotoElement.style.setProperty(
-                "border",
-                `4px solid ${data[1]}`
-            );
-        };
-        fetchInfoUser();
+                    const userPhotoElement = document.querySelector("#photo");
+                    userPhotoElement.style.setProperty(
+                        "border",
+                        `4px solid ${data[1]}`
+                    );
+                };
+                fetchInfoUser();
 
-        if (arrayGlobalPostsUserLogged) {
-            console.log("ARRAYS USER GLOBAL ");
-            console.log(arrayGlobalPostsUserLogged);
-        }
+                // para hacer fetch de los favorites del usuario logueado
+                const fetchFavorites = async () => {
 
-        // }
+                    async function bringInfoUserFirebase(idDocument) {
+                        // Crear referencia al documento
+                        const docuRef = doc(firestore, `usuarios/${idDocument}`);
+                
+                        // buscar documento
+                        const consulta = await getDoc(docuRef);
+                
+                        if (consulta.exists()) {
+                            // si si existe el documento
+                            const infoDocu = consulta.data();
+                
+                            return infoDocu;
+                        }
+                    }
+                    const infoUser = await bringInfoUserFirebase(dataGlobalUser.email);
+
+                    setArrayGlobalFavoritesUserLogged(infoUser.favorites);
+                    console.log("hola")
+                    console.log(arrayGlobalFavoritesUserLogged)
+                }
+                fetchFavorites()
+            }
+        );
 
         return () => {
             console.log("DESMONTANDO PROFILE PAGE");
+            desuscribir();
         };
     }, []);
 
@@ -179,18 +211,16 @@ function ProfilePage({ dataGlobalUser, arrayGlobalPostsUserLogged }) {
 
             <section className="ProfilePage-section">
                 <div className="ProfilePage-section-content">
-
-                    {
-                        showListOf === "posts" ? (
-
-                            <PostsList arrayGlobalPostsUserLogged={arrayGlobalPostsUserLogged}/>
-
-                        ) : (
-
-                        showListOf === "favorites" && <FavoritesList />
-
-                        )
-                    }
+                    {showListOf === "posts" ? (
+                        <PostsList
+                            arrayGlobalPostsUserLogged={
+                                arrayGlobalPostsUserLogged
+                            }
+                            dataGlobalUser={dataGlobalUser}
+                        />
+                    ) : (
+                        showListOf === "favorites" && <FavoritesList arrayGlobalFavoritesUserLogged={arrayGlobalFavoritesUserLogged} dataGlobalUser={dataGlobalUser}/>
+                    )}
                 </div>
             </section>
         </>
@@ -199,36 +229,43 @@ function ProfilePage({ dataGlobalUser, arrayGlobalPostsUserLogged }) {
 
 export default ProfilePage;
 
+function PostsList({ arrayGlobalPostsUserLogged, dataGlobalUser}) {
+    return arrayGlobalPostsUserLogged.map((objPost) => {
+        return (
+            <TweetCard
+                key={objPost.id}
+                photo={objPost.photo}
+                userName={objPost.userName}
+                text={objPost.text}
+                likes={objPost.likes}
+                colorUser={objPost.colorUser}
+                id={objPost.id}
+                email={objPost.email}
+                postDate={objPost.postDate}
+                dataGlobalUser={dataGlobalUser}
 
-
-function PostsList({ arrayGlobalPostsUserLogged , dataGlobalUser}) {
-
-    return (
-        <>
-            <h1>Post List</h1>
-
-            {arrayGlobalPostsUserLogged.map((objPost) => {
-
-                return (
-
-                    <TweetCard
-                        photo={objPost.photo}
-                        userName={objPost.userName}
-                        text={objPost.text}
-                        key={objPost.id}
-                        likes={objPost.likes}
-                        colorUser= {objPost.colorUser}
-                        id={objPost.id}
-                        email={objPost.email}
-                        postDate={objPost.postDate}
-                        dataGlobalUser={dataGlobalUser}
-                    />
-                )
-            })}
-        </>
-    );
+        
+            />
+        );
+    });
 }
 
-function FavoritesList() {
-    return <h1>Favorites List</h1>;
+function FavoritesList({ arrayGlobalFavoritesUserLogged, dataGlobalUser }) {
+
+    return arrayGlobalFavoritesUserLogged.map((objFavorite) => {
+        return (
+            <TweetCard
+                key={objFavorite.id}
+                photo={objFavorite.photo}
+                userName={objFavorite.userName}
+                text={objFavorite.text}
+                likes={objFavorite.likes}
+                colorUser={objFavorite.colorUser}
+                id={objFavorite.id}
+                email={objFavorite.email}
+                postDate={objFavorite.postDate}
+                dataGlobalUser={dataGlobalUser}
+            />
+        );
+    })
 }

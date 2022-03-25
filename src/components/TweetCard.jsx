@@ -2,12 +2,11 @@ import React, { useState } from "react";
 
 import "./styles/TweetCard.css";
 
-// import fakeUser from "../assets/fake-user.png";
 import delete_logo from "../assets/delete.png";
 import like_red from "../assets/heart-red.png";
 import like_white from "../assets/heart-white.png";
 
-import {doc, getDoc, updateDoc} from 'firebase/firestore';
+import {doc, getDoc, updateDoc,collection,getDocs} from 'firebase/firestore';
 import { firestore } from "../firebase";
 
 const TweetCard = ({
@@ -20,22 +19,16 @@ const TweetCard = ({
     id,
     email,
     postDate,
-    setRefreshDueLike,
-    refreshDueLike
-}) => {
 
+    
+}) => {
 
     const [currentLike, setCurrentLike] = useState(likes)
 
+//----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
 
     const handleLikes = (id) => { 
-
-        if(refreshDueLike) {
-            setRefreshDueLike(false);
-        }
-        else{
-            setRefreshDueLike(true);
-        }
 
         // funcion que retorna un array actualizado, el cual actualiza el objeto del tweet que fue likeado 
         function arrayUpdatedLiked(array,id){
@@ -69,23 +62,68 @@ const TweetCard = ({
 
             const infoUserPosts = infoUser.posts
         
-            console.log(arrayUpdatedLiked(infoUserPosts,id))
-
             const docuRef = doc(firestore, `usuarios/${email}`);
+
+            setCurrentLike(currentLike + 1);
 
             updateDoc( docuRef, {  posts: [...arrayUpdatedLiked(infoUserPosts,id)]  } ); 
 
-            setCurrentLike(currentLike + 1)
-            console.log(likes,"id:" , id);
         }
         fetchInfo();
-        // --------------------            
+    
+    //----------------------------------------------------------------------------------
+    // Manejo para agregar ese post likeado a la lista de Favorites del usuario logueado
+
+        // 1. identificar el id del post likeado
+        console.log("id del post:",id)
+        console.log("correo de usuario de ese post:",email);
+
+        // 2. obtener la informacion de ese post likeado (segun el id y el correo del usuario perteneciente a ese post) 
+        const fetchInfo2 = async () => {
+
+            //funcion para sleccionar unicamente el objeto que se dio like
+            function objectLiked (array,id){
+                const obj = array.filter((objeto)=> objeto.id === id)
+            return obj
+            }
+
+            async function updateFavorites() {
+
+                const dataCollection = await getDocs(collection(firestore, "usuarios"));
+
+                const infoUser = await bringInfoUserFirebase(dataGlobalUser.email);
+                const infoUserFavorites = infoUser.favorites
         
+                const docuRef = doc(firestore, `usuarios/${dataGlobalUser.email}`);
+        
+                const arrayAllPost = [];
+        
+                dataCollection.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    // console.log(doc.data().posts);
+                    arrayAllPost.push(...doc.data().posts);
+                });
+        
+                console.log("arrayAllPOst");
+                console.log(arrayAllPost);
+
+                const objLiked = objectLiked(arrayAllPost,id);
+                console.log("objeto dado like:")
+                console.log(objLiked)
+
+                updateDoc( docuRef, {  favorites: [...infoUserFavorites,...objLiked] } ); 
+
+            }
+            updateFavorites(); 
+        }
+        fetchInfo2();
     };
 
 
+//----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
     const handleDelete = (id) => {
-        console.log("Delete id",id);
+        // console.log("Delete id",id);
 
         async function bringInfoUserFirebase(idDocument) {
         
@@ -116,8 +154,7 @@ const TweetCard = ({
         fetchInfo();
     };
 
-
-
+//----------------------------------------------------------------------------------
     //Function to display the date when the tweet was published
     function dayAndMonth(number) {
         let date = new Date(number);
