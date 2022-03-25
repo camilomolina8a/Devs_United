@@ -7,6 +7,7 @@ import backLogo from "../assets/back.png";
 import logoutLogo from "../assets/logout.png";
 
 import TweetCard from "../components/TweetCard";
+import Loader from "../components/Loader";
 
 import { firestore, logout } from "../firebase.js";
 import { doc, getDoc, onSnapshot, collection } from "firebase/firestore";
@@ -164,7 +165,7 @@ function ProfilePage({
                         to="/feed-page"
                     >
                         <img src={backLogo} alt="Back to Feed Page" />
-                        <p>{userName ? userName : "USERNAME"}</p>
+                        <p>{userName ? userName : <Loader/>}</p>
                     </Link>
 
                     <div
@@ -186,7 +187,7 @@ function ProfilePage({
                             id="photo"
                         />
                         <p id="userName-profile">
-                            {userName ? userName : "USERNAME"}
+                            {userName ? userName : <Loader/>}
                         </p>
                     </div>
 

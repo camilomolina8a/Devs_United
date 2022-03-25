@@ -125,33 +125,39 @@ const TweetCard = ({
     const handleDelete = (id) => {
         // console.log("Delete id",id);
 
-        async function bringInfoUserFirebase(idDocument) {
+        const confirmar = window.confirm("Desea eliminar este post?:")
+        if(confirmar){
+            async function bringInfoUserFirebase(idDocument) {
         
-            const docuRef = doc(firestore, `usuarios/${idDocument}`);
-
-            const consulta = await getDoc(docuRef);
-
-            if (consulta.exists()) {
-                
-                const infoDocu = consulta.data();
-
-            return infoDocu;
+                const docuRef = doc(firestore, `usuarios/${idDocument}`);
+    
+                const consulta = await getDoc(docuRef);
+    
+                if (consulta.exists()) {
+                    
+                    const infoDocu = consulta.data();
+    
+                return infoDocu;
+                }
             }
+    
+            const fetchInfo = async () => {
+    
+                const infoUser = await bringInfoUserFirebase(email);
+    
+                const infoUserPosts = infoUser.posts
+    
+                const newArray = infoUserPosts.filter((objeto)=> objeto.id !== id)
+            
+                const docuRef = doc(firestore, `usuarios/${email}`);
+    
+                updateDoc( docuRef, {  posts: [...newArray]  } ); 
+            }
+            fetchInfo();
         }
-
-        const fetchInfo = async () => {
-
-            const infoUser = await bringInfoUserFirebase(email);
-
-            const infoUserPosts = infoUser.posts
-
-            const newArray = infoUserPosts.filter((objeto)=> objeto.id !== id)
-        
-            const docuRef = doc(firestore, `usuarios/${email}`);
-
-            updateDoc( docuRef, {  posts: [...newArray]  } ); 
+        else{
+            return
         }
-        fetchInfo();
     };
 
 //----------------------------------------------------------------------------------
