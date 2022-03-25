@@ -71,10 +71,10 @@ function FeedPage({
         if (currentLength > 0 && arrayUserPosts) {
             if (isPost) {
                 setIsPost(false);
-                console.log(isPost);
+                // console.log(isPost);
             } else {
                 setIsPost(true);
-                console.log(isPost);
+                // console.log(isPost);
             }
 
             // para borrar la entrada de texto (se lo hace asi porque no es un texarea)
@@ -166,7 +166,7 @@ function FeedPage({
     }
 
     useEffect(() => {
-        console.log("MONTANDO FEED PAGE");
+        // console.log("MONTANDO FEED PAGE");
 
         const desuscribir = onSnapshot(collection(firestore, "usuarios") ,()=> {
 
@@ -194,7 +194,7 @@ function FeedPage({
 
         return () => {
             desuscribir();
-            console.log("DESMONTANDO FEED PAGE");
+            // console.log("DESMONTANDO FEED PAGE");
         };
 
     }, [isPost]);

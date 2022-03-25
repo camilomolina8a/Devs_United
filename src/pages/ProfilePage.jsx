@@ -31,15 +31,16 @@ function ProfilePage({
     };
 
     const btnActivePosts = (btnID, otherBtnID) => {
-        console.log("presionaste Posts");
+        // console.log("presionaste Posts");
         // To manage the style when the Post button was clicked
         const btnClicked = document.getElementById(btnID);
         const otherBtn = document.getElementById(otherBtnID);
 
         if (btnClicked.classList.contains("btn-active")) {
-            console.log("TINE CLASE");
+            // console.log("TINE CLASE");
+            console.log()
         } else {
-            console.log("AGREGANDO CLASE");
+            // console.log("AGREGANDO CLASE");
             btnClicked.classList.add("btn-active");
             otherBtn.classList.remove("btn-active");
         }
@@ -51,16 +52,17 @@ function ProfilePage({
     };
 
     const btnActiveFavorites = (btnID, otherBtnID) => {
-        console.log("presionaste favorites");
+        // console.log("presionaste favorites");
 
         // To manage the style when the Post button was clicked
         const btnClicked = document.getElementById(btnID);
         const otherBtn = document.getElementById(otherBtnID);
 
         if (btnClicked.classList.contains("btn-active")) {
-            console.log("TINE CLASE");
+            // console.log("TINE CLASE");
+            console.log()
         } else {
-            console.log("AGREGANDO CLASE");
+            // console.log("AGREGANDO CLASE");
             btnClicked.classList.add("btn-active");
             otherBtn.classList.remove("btn-active");
         }
@@ -89,7 +91,7 @@ function ProfilePage({
     }
 
     useEffect(() => {
-        console.log("MONTANDO PROFILE PAGE");
+        // console.log("MONTANDO PROFILE PAGE");
         // creamos la funcion asincrona para que se ejecute luego de montarse el componente
 
         const desuscribir = onSnapshot(
@@ -138,15 +140,15 @@ function ProfilePage({
                     const infoUser = await bringInfoUserFirebase(dataGlobalUser.email);
 
                     setArrayGlobalFavoritesUserLogged(infoUser.favorites);
-                    console.log("hola")
-                    console.log(arrayGlobalFavoritesUserLogged)
+                    // console.log("hola")
+                    // console.log(arrayGlobalFavoritesUserLogged)
                 }
                 fetchFavorites()
             }
         );
 
         return () => {
-            console.log("DESMONTANDO PROFILE PAGE");
+            // console.log("DESMONTANDO PROFILE PAGE");
             desuscribir();
         };
     }, []);

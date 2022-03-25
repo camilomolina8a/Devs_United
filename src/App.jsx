@@ -38,7 +38,8 @@ function App() {
                 setDataGlobalUser(firebaseUser);
                 // console.log(firebaseUser);
             } else {
-                console.log("NO Logueado");
+                // console.log("NO Logueado");
+                console.log()
             }
         });
 

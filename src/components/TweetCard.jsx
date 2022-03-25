@@ -75,8 +75,8 @@ const TweetCard = ({
     // Manejo para agregar ese post likeado a la lista de Favorites del usuario logueado
 
         // 1. identificar el id del post likeado
-        console.log("id del post:",id)
-        console.log("correo de usuario de ese post:",email);
+        // console.log("id del post:",id)
+        // console.log("correo de usuario de ese post:",email);
 
         // 2. obtener la informacion de ese post likeado (segun el id y el correo del usuario perteneciente a ese post) 
         const fetchInfo2 = async () => {
@@ -104,12 +104,12 @@ const TweetCard = ({
                     arrayAllPost.push(...doc.data().posts);
                 });
         
-                console.log("arrayAllPOst");
-                console.log(arrayAllPost);
+                // console.log("arrayAllPOst");
+                // console.log(arrayAllPost);
 
                 const objLiked = objectLiked(arrayAllPost,id);
-                console.log("objeto dado like:")
-                console.log(objLiked)
+                // console.log("objeto dado like:")
+                // console.log(objLiked)
 
                 updateDoc( docuRef, {  favorites: [...infoUserFavorites,...objLiked] } ); 
 
