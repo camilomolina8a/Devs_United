@@ -102,21 +102,23 @@ function ProfilePage({
                     const data = await searchUserNameColorUserFromFirebase(
                         dataGlobalUser.email
                     );
-                    setUserName(data[0]);
-                    // seteamos el background color y el border del username del profile page basado en el color que registramos en firebase
+                    if(data){
+                        setUserName(data[0]);
+                        // seteamos el background color y el border del username del profile page basado en el color que registramos en firebase
 
-                    const userNameElement =
-                        document.querySelector("#userName-profile");
-                    userNameElement.style.setProperty(
-                        "background-color",
-                        data[1]
-                    );
+                        const userNameElement =
+                            document.querySelector("#userName-profile");
+                        userNameElement.style.setProperty(
+                            "background-color",
+                            data[1]
+                        );
 
-                    const userPhotoElement = document.querySelector("#photo");
-                    userPhotoElement.style.setProperty(
-                        "border",
-                        `4px solid ${data[1]}`
-                    );
+                        const userPhotoElement = document.querySelector("#photo");
+                        userPhotoElement.style.setProperty(
+                            "border",
+                            `4px solid ${data[1]}`
+                        );
+                    }
                 };
                 fetchInfoUser();
 

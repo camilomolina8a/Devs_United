@@ -136,7 +136,6 @@
     min-height: 35px;
     width: 100%;
 
-    /* border: 1px solid white; */
 }
 .button-container button {
     width: 105px;
@@ -150,7 +149,6 @@
     color: #f50d5a;
     background-color: var(--bg-color-section);
 
-    /* border: 1px solid white; */
 }
 
 .button-container button:hover {
@@ -164,11 +162,8 @@
     justify-content: center;
     width: 100%;
     border-top: 2px solid #914D8B;
-    border: 1px solid white;    
 }
 
 .Feed-section-content {
-
     width: 50%;
-    border: 1px solid white;
 }

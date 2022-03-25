@@ -33,7 +33,7 @@ const TweetCard = ({
         // funcion que retorna un array actualizado, el cual actualiza el objeto del tweet que fue likeado 
         function arrayUpdatedLiked(array,id){
 
-            array.map( (objeto) =>{
+            array.map( (objeto) => {
                 if(objeto.id === id){
                     objeto.likes = currentLike + 1
                 }
@@ -166,7 +166,7 @@ const TweetCard = ({
 
     return (
         <>
-            <div className="TweetCard">
+            <div className="TweetCard" key={id}>
                 <div className="TweetCard-picture">
                     <img src={photo} alt="User profile" />
                 </div>
